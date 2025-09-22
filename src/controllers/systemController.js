@@ -4,13 +4,38 @@ const JobTicket = require('../models/JobTicket');
 const BrokenLinkReport = require('../models/BrokenLinkReport'); // BARU: Import model laporan link rusak
 const { runScraper } = require('../services/scraperService');
 const axios = require('axios');
-
+const mongoose = require('mongoose');
 const config = require('../config');
 const { processQueue } = require('../services/enrichmentService');
 
 // @desc    Get stats of the data pipeline
 // @route   GET /api/v1/system/stats
 // @access  Private/Admin (Harus diamankan!)
+
+
+
+
+const checkDb = async (req, res) => {
+    try {
+        const state = mongoose.connection.readyState;
+        const states = ["disconnected", "connected", "connecting", "disconnecting"];
+
+        // coba query data 1 anime (kalau ada)
+        const sample = await Anime.findOne();
+
+        res.json({
+            mongoState: states[state],
+            dbName: mongoose.connection.name,
+            host: mongoose.connection.host,
+            port: mongoose.connection.port,
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Mongo check failed",
+            error: err.message
+        });
+    }
+};
 const unassignJobs = async (req, res) => {
     const { botId, statusToReset = 'assigned' } = req.body; // default reset assigned jobs
 
@@ -293,5 +318,6 @@ module.exports = {
     syncAndCreateJobs,
     getBrokenLinkReports, // BARU
     unassignJobs,
-    deleteJobs
+    deleteJobs,
+    checkDb,
 };

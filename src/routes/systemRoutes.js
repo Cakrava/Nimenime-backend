@@ -11,6 +11,7 @@ const { // BARU: Tambahkan getBrokenLinkReports
     getBrokenLinkReports,
     deleteJobs,
     unassignJobs,
+    checkDb,
 } = require('../controllers/systemController');
 
 // TODO: Tambahkan middleware keamanan admin di sini juga jika diperlukan role-based access!
@@ -25,5 +26,5 @@ router.post('/sync-jobs', protect, syncAndCreateJobs);
 router.get('/broken-link-reports', protect, getBrokenLinkReports); // BARU: Rute untuk melihat laporan link rusak
 router.post('/jobs/unassign', protect, unassignJobs); // Mengubah status pekerjaan menjadi 'pending'
 router.delete('/jobs/delete', protect, deleteJobs);   // Menghapus pekerjaan
-
+router.get('/debug', checkDb);
 module.exports = router;
