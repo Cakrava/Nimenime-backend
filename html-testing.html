@@ -1,0 +1,2475 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeVerse API Test UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-dark: #0056b3;
+            --secondary-color: #6c757d;
+            --background-light: #f8f9fa;
+            --background-dark: #343a40;
+            --text-light: #f8f9fa;
+            --text-dark: #343a40;
+            --card-background: #ffffff;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 0.95rem;
+            /* Ukuran font dasar sedikit lebih kecil */
+        }
+
+        #app-container {
+            display: flex;
+            flex-grow: 1;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px;
+            /* Margin diperkecil */
+        }
+
+        #sidebar {
+            width: 250px;
+            /* Lebar sidebar diperkecil */
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            padding: 20px 0;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            /* Margin diperkecil */
+            color: var(--primary-color);
+            font-size: 1.6em;
+            /* Ukuran font diperkecil */
+            font-weight: 600;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        #sidebar li {
+            margin-bottom: 3px;
+            /* Margin diperkecil */
+        }
+
+        #sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            /* Padding diperkecil */
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border-radius: 0 50px 50px 0;
+            margin-right: 10px;
+            /* Margin diperkecil */
+        }
+
+        #sidebar a i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        #sidebar a:hover {
+            background-color: #495057;
+            color: var(--primary-color);
+        }
+
+        #sidebar a.active {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        #sidebar a.active:hover {
+            background-color: var(--primary-dark);
+        }
+
+
+        #main-content {
+            flex-grow: 1;
+            padding: 25px;
+            /* Padding diperkecil */
+            background-color: var(--background-light);
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            text-align: center;
+            margin-bottom: 25px;
+            /* Margin diperkecil */
+            font-weight: 700;
+            font-size: 2em;
+            /* Ukuran font disesuaikan */
+        }
+
+        .section {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            /* Padding diperkecil */
+            margin-bottom: 20px;
+            /* Margin diperkecil */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            /* Padding diperkecil */
+            margin-bottom: 15px;
+            /* Margin diperkecil */
+            font-weight: 600;
+            font-size: 1.4em;
+            /* Ukuran font disesuaikan */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            /* Margin diperkecil */
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.9em;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            width: calc(100% - 20px);
+            /* Lebar disesuaikan */
+            padding: 10px;
+            /* Padding diperkecil */
+            margin-bottom: 12px;
+            /* Margin diperkecil */
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            /* Ukuran font disesuaikan */
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 10px 18px;
+            /* Padding diperkecil */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            /* Ukuran font disesuaikan */
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-right: 8px;
+            /* Margin diperkecil */
+            margin-bottom: 8px;
+            /* Margin diperkecil */
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+            display: flex;
+            /* Untuk ikon */
+            align-items: center;
+            /* Untuk ikon */
+            justify-content: center;
+            /* Untuk ikon */
+        }
+
+        button i {
+            margin-right: 5px;
+            /* Spasi antara ikon dan teks */
+        }
+
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 123, 255, 0.3);
+        }
+
+        .button-group {
+            margin-top: 10px;
+            /* Margin diperkecil */
+            margin-bottom: 10px;
+            /* Margin diperkecil */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            /* Jarak kecil antar tombol */
+        }
+
+        /* Gaya area respons */
+        .response-container {
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .response-tabs {
+            display: flex;
+            background-color: #e9ecef;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .response-tab-button {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--secondary-color);
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 0;
+            margin: 0;
+            box-shadow: none;
+        }
+
+        .response-tab-button.active {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            box-shadow: inset 0 -3px 0 0 var(--primary-dark);
+            /* Indikator tab aktif */
+        }
+
+        .response-tab-button.active:hover {
+            background-color: var(--primary-dark);
+        }
+
+
+        .response-content {
+            padding: 15px;
+            background-color: var(--card-background);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            /* Font monospace untuk JSON */
+            font-size: 0.9em;
+            overflow-x: auto;
+            min-height: 100px;
+            /* Tinggi minimum untuk area respons */
+        }
+
+        .response-content.success {
+            border-left: 5px solid var(--success-color);
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .response-content.error {
+            border-left: 5px solid var(--error-color);
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Gaya khusus untuk kartu UI View */
+        .ui-view-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            /* Grid responsif */
+            gap: 15px;
+            /* Jarak antar kartu diperkecil */
+            padding: 10px 0;
+        }
+
+        .ui-card {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ui-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .ui-card img {
+            max-width: 100%;
+            height: 180px;
+            /* Tinggi tetap untuk gambar */
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .ui-card h4 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .ui-card p {
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .ui-card p strong {
+            color: var(--primary-color);
+        }
+
+        .ui-card .card-actions {
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        .ui-card .card-actions button {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            margin-bottom: 0;
+            box-shadow: none;
+            background-color: var(--success-color);
+        }
+
+        .ui-card .card-actions button:hover {
+            background-color: #218838;
+        }
+
+        /* Gaya kartu khusus untuk broken links */
+        .failed-link-card {
+            background-color: #fff3cd;
+            /* Latar belakang kuning muda untuk peringatan */
+            border-color: #ffc107;
+            /* Warna border peringatan */
+        }
+
+        .failed-link-card h4 {
+            color: #856404;
+            /* Teks kuning/coklat lebih gelap */
+        }
+
+        .failed-link-card .card-actions button {
+            background-color: var(--warning-color);
+            color: var(--text-dark);
+        }
+
+        .failed-link-card .card-actions button:hover {
+            background-color: #e0a800;
+        }
+
+
+        .auth-status {
+            margin-bottom: 15px;
+            /* Margin diperkecil */
+            font-weight: 500;
+            padding: 8px 12px;
+            /* Padding diperkecil */
+            background-color: var(--card-background);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            color: var(--info-color);
+            font-size: 0.85em;
+        }
+
+        .auth-status span {
+            font-weight: 600;
+        }
+
+        .auth-status #currentToken {
+            color: var(--primary-dark);
+        }
+
+        .auth-status #currentUserId {
+            color: #6f42c1;
+        }
+
+        .sticky-header {
+            background-color: var(--card-background);
+            padding: 10px 25px;
+            /* Padding diperkecil */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sticky-header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            /* Ukuran font diperkecil */
+            text-align: left;
+        }
+
+        .sticky-header p {
+            margin: 0;
+            font-size: 0.8em;
+            color: var(--secondary-color);
+        }
+
+        .input-inline-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            /* Jarak antar item */
+            margin-bottom: 15px;
+        }
+
+        .input-inline-group label {
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .input-inline-group input[type="number"],
+        .input-inline-group input[type="text"] {
+            flex-grow: 1;
+            /* Memungkinkan input untuk tumbuh */
+            max-width: 150px;
+            /* Lebar maksimal untuk input yang lebih kecil */
+            margin-bottom: 0;
+        }
+
+        /* Media Queries untuk Responsivitas */
+        @media (max-width: 992px) {
+            #app-container {
+                flex-direction: column;
+                margin: 0;
+                border-radius: 0;
+            }
+
+            #sidebar {
+                width: 100%;
+                padding: 15px 0;
+                /* Padding disesuaikan */
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            #sidebar h2 {
+                margin-bottom: 15px;
+            }
+
+            #sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+                /* Menambah jarak */
+            }
+
+            #sidebar li {
+                margin: 0;
+                /* Mengatur ulang margin */
+            }
+
+            #sidebar a {
+                border-radius: 4px;
+                margin-right: 0;
+                padding: 8px 12px;
+                /* Padding diperkecil */
+                font-size: 0.85rem;
+            }
+
+            #sidebar a i {
+                margin-right: 8px;
+                font-size: 1em;
+            }
+
+            #main-content {
+                padding: 15px;
+            }
+
+            .sticky-header h1 {
+                font-size: 1.3em;
+            }
+
+            .sticky-header p {
+                display: none;
+                /* Sembunyikan di layar kecil */
+            }
+
+            .section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .section h3 {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="number"],
+            textarea {
+                padding: 8px;
+                font-size: 0.85rem;
+                margin-bottom: 10px;
+            }
+
+            button {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+
+            .button-group {
+                gap: 5px;
+            }
+
+            .input-inline-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .input-inline-group input {
+                max-width: 100%;
+                /* Memungkinkan input untuk mengambil lebar penuh */
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sticky-header">
+        <h1>AnimeVerse Backend API Test UI</h1>
+        <p>Gunakan konsol browser (F12) untuk melihat detail permintaan dan respons.</p>
+    </div>
+
+    <div id="app-container">
+        <aside id="sidebar">
+            <h2>AnimeVerse API</h2>
+            <ul>
+                <li><a href="#" class="sidebar-link active" data-section="auth-section"><i class="fas fa-user-lock"></i>
+                        Auth</a></li>
+                <li><a href="#" class="sidebar-link" data-section="user-profile-section"><i
+                            class="fas fa-user-circle"></i> User Profile</a></li>
+                <li><a href="#" class="sidebar-link" data-section="anime-section"><i class="fas fa-tv"></i> Anime</a>
+                </li>
+                <li><a href="#" class="sidebar-link" data-section="reviews-section"><i class="fas fa-comments"></i>
+                        Reviews</a></li>
+                <li><a href="#" class="sidebar-link" data-section="broken-link-section"><i class="fas fa-unlink"></i>
+                        Broken Link Report</a></li>
+                <li><a href="#" class="sidebar-link" data-section="system-section"><i class="fas fa-cogs"></i> System
+                        Stats (Admin)</a></li>
+                <li><a href="#" class="sidebar-link" data-section="documentation-section"
+                        onclick="generateDocumentation(); return false;"><i class="fas fa-file-alt"></i> Download API
+                        Docs</a></li>
+            </ul>
+        </aside>
+
+        <main id="main-content">
+            <div class="auth-status">
+                Token: <span id="currentToken" style="color: var(--primary-dark);">(None)</span> <br>
+                User ID: <span id="currentUserId" style="color: #6f42c1;">(None)</span>
+            </div>
+
+            <section id="auth-section" class="section active">
+                <h3>Auth</h3>
+                <label for="regUsername">Username:</label><input type="text" id="regUsername" value="testuser"><br>
+                <label for="regEmail">Email:</label><input type="email" id="regEmail" value="test@example.com"><br>
+                <label for="regPassword">Password:</label><input type="password" id="regPassword"
+                    value="password123"><br>
+                <div class="button-group">
+                    <button onclick="register()"><i class="fas fa-user-plus"></i> Register</button>
+                    <button onclick="login()"><i class="fas fa-sign-in-alt"></i> Login</button>
+                    <button onclick="clearToken()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+                <div id="authResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json" data-target="authResponse">JSON
+                            View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="authResponse">UI View</button>
+                    </div>
+                    <div id="authResponse" class="response-content"></div>
+                </div>
+            </section>
+
+            <section id="user-profile-section" class="section">
+                <h3>User Profile</h3>
+                <div class="button-group">
+                    <button onclick="getProfile()"><i class="fas fa-user"></i> Get Profile</button>
+                </div>
+                <label for="updateUsername">New Username:</label><input type="text" id="updateUsername"
+                    placeholder="e.g., new_user_name"><br>
+                <label for="updateEmail">New Email:</label><input type="email" id="updateEmail"
+                    placeholder="e.g., new@example.com"><br>
+                <label for="updateAvatar">New Avatar URL:</label><input type="text" id="updateAvatar"
+                    placeholder="e.g., https://example.com/avatar.png"><br>
+                <label for="updateBio">New Bio:</label><textarea id="updateBio" rows="3"
+                    placeholder="e.g., I love anime!"></textarea><br>
+                <div class="button-group">
+                    <button onclick="updateProfile()"><i class="fas fa-user-edit"></i> Update Profile</button>
+                </div>
+                <hr style="margin: 20px 0; border-color: var(--border-color);">
+                <label for="currentPassword">Current Password:</label><input type="password" id="currentPassword"><br>
+                <label for="newPassword">New Password:</label><input type="password" id="newPassword"><br>
+                <div class="button-group">
+                    <button onclick="changePassword()"><i class="fas fa-key"></i> Change Password</button>
+                </div>
+                <div id="userProfileResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json"
+                            data-target="userProfileResponse">JSON View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="userProfileResponse">UI
+                            View</button>
+                    </div>
+                    <div id="userProfileResponse" class="response-content"></div>
+                </div>
+            </section>
+
+            <section id="anime-section" class="section">
+                <h3>Anime</h3>
+                <div class="input-inline-group">
+                    <label for="animeId">Anime MAL ID:</label><input type="number" id="animeId" value="1"
+                        style="max-width: 100px;">
+                    <button onclick="getAnimeFullDetail()"><i class="fas fa-info-circle"></i> Get Full Detail</button>
+                    <button onclick="getAnimeEpisodes()"><i class="fas fa-play-circle"></i> Get Episodes</button>
+                    <button onclick="getAnimeRecommendations()"><i class="fas fa-star"></i> Get Recommendations</button>
+                </div>
+                <hr style="margin: 15px 0; border-color: var(--border-color);">
+                <label for="searchQuery">Search Query:</label><input type="text" id="searchQuery" value=""
+                    placeholder="e.g., Naruto"><br>
+                <div class="input-inline-group">
+                    <label for="page">Page:</label><input type="number" id="page" value="1" style="max-width: 80px;">
+                    <label for="limit">Limit:</label><input type="number" id="limit" value="10"
+                        style="max-width: 80px;">
+                </div>
+                <label for="genres">Genres (MAL IDs, comma-separated):</label><input type="text" id="genres" value=""
+                    placeholder="e.g., 1,2,8"><br>
+                <label for="status">Status (e.g., currently airing, finished airing, not yet aired):</label><input
+                    type="text" id="status" value="" placeholder="e.g., finished airing"><br>
+                <label for="rating">Rating (e.g., Pg-13, R - 17+):</label><input type="text" id="rating" value=""
+                    placeholder="e.g., PG-13"><br>
+                <label for="orderBy">Order By (e.g., popularity, score, latest):</label><input type="text" id="orderBy"
+                    value="" placeholder="e.g., score"><br>
+                <label for="sort">Sort (asc, desc):</label><input type="text" id="sort" value="desc"
+                    placeholder="desc"><br>
+                <div class="input-inline-group">
+                    <label for="minScore">Min Score:</label><input type="number" id="minScore" value=""
+                        style="max-width: 100px;">
+                    <label for="maxScore">Max Score:</label><input type="number" id="maxScore" value=""
+                        style="max-width: 100px;">
+                    <label for="minMembers">Min Members:</label><input type="number" id="minMembers" value=""
+                        style="max-width: 100px;">
+                </div>
+
+                <div class="button-group">
+                    <button onclick="getAnimeList()"><i class="fas fa-list"></i> Get Anime List</button>
+                    <button onclick="getTopAnime()"><i class="fas fa-trophy"></i> Get Top Anime</button>
+                    <button onclick="getAllSeasons()"><i class="fas fa-calendar-alt"></i> Get All Seasons</button>
+                    <button onclick="getSeasonNowAnime()"><i class="fas fa-clock"></i> Get Season Now Anime</button>
+                    <button onclick="getWeeklySchedules()"><i class="fas fa-calendar-week"></i> Get Weekly
+                        Schedules</button>
+                    <button onclick="getAnimeGenres()"><i class="fas fa-tags"></i> Get Anime Genres</button>
+                </div>
+                <div class="input-inline-group">
+                    <label for="seasonYear">Year:</label><input type="number" id="seasonYear" value="2024"
+                        style="max-width: 80px;">
+                    <label for="seasonName">Season:</label><input type="text" id="seasonName" value="winter"
+                        placeholder="winter" style="max-width: 100px;">
+                    <button onclick="getAnimeBySeason()"><i class="fas fa-calendar-day"></i> Get Anime By
+                        Season</button>
+                </div>
+                <div id="animeResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json" data-target="animeResponse">JSON
+                            View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="animeResponse">UI View</button>
+                    </div>
+                    <div id="animeResponse" class="response-content"></div>
+                </div>
+            </section>
+
+            <section id="reviews-section" class="section">
+                <h3>Reviews</h3>
+                <label for="reviewAnimeId">Anime MAL ID:</label><input type="number" id="reviewAnimeId" value="1"><br>
+                <label for="reviewRating">Rating (1-10):</label><input type="number" id="reviewRating" value="8" min="1"
+                    max="10"><br>
+                <label for="reviewComment">Comment:</label><textarea id="reviewComment"
+                    rows="4">This is a great anime!</textarea><br>
+                <div class="button-group">
+                    <button onclick="addReview()"><i class="fas fa-plus-circle"></i> Add Review</button>
+                    <button onclick="getAnimeReviews()"><i class="fas fa-comment-dots"></i> Get Anime Reviews</button>
+                </div>
+                <div id="reviewResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json" data-target="reviewResponse">JSON
+                            View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="reviewResponse">UI View</button>
+                    </div>
+                    <div id="reviewResponse" class="response-content"></div>
+                </div>
+            </section>
+
+            <section id="broken-link-section" class="section">
+                <h3>Broken Link Report</h3>
+                <label for="reportAnimeId">Anime MAL ID:</label><input type="number" id="reportAnimeId" value="1"><br>
+                <label for="reportEpisodeNumber">Episode Number:</label><input type="number" id="reportEpisodeNumber"
+                    value="1"><br>
+                <label for="reportSource">Source (e.g., Pucuk, Mega):</label><input type="text" id="reportSource"
+                    value="Pucuk"><br>
+                <label for="reportDescription">Description:</label><textarea id="reportDescription"
+                    rows="3">Link rusak, tidak bisa diakses.</textarea><br>
+                <div class="button-group">
+                    <button onclick="reportBrokenLink()"><i class="fas fa-bug"></i> Report Broken Link</button>
+                </div>
+                <div id="brokenLinkResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json"
+                            data-target="brokenLinkResponse">JSON View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="brokenLinkResponse">UI
+                            View</button>
+                    </div>
+                    <div id="brokenLinkResponse" class="response-content"></div>
+                </div>
+            </section>
+
+            <section id="system-section" class="section">
+                <h3>System Stats (Admin Only)</h3>
+                <div class="button-group">
+                    <button onclick="getSystemStats()"><i class="fas fa-chart-line"></i> Get System Stats</button>
+                    <button onclick="getFailedLinks()"><i class="fas fa-exclamation-triangle"></i> Get Failed
+                        Links</button>
+                    <button onclick="getBrokenLinkReports()"><i class="fas fa-clipboard-list"></i> Get All Broken Link
+                        Reports</button>
+                </div>
+                <hr style="margin: 15px 0; border-color: var(--border-color);">
+                <h4>Manual Match Scraped Link</h4>
+                <label for="manualMatchScrapedId">Scraped Link ID (Mongoose _id):</label><input type="text"
+                    id="manualMatchScrapedId" placeholder="e.g., 68cf0bd5cab4dfbc5c35cfd2"><br>
+                <label for="manualMatchMalId">MAL ID:</label><input type="number" id="manualMatchMalId" value="1"><br>
+                <div class="button-group">
+                    <button onclick="manualMatch()"><i class="fas fa-link"></i> Manual Match</button>
+                </div>
+                <hr style="margin: 15px 0; border-color: var(--border-color);">
+                <h4>Scraping & Sync Actions</h4>
+                <div class="button-group">
+                    <button onclick="triggerScraper()"><i class="fas fa-robot"></i> Trigger Scraper</button>
+                    <button onclick="triggerEnrichment()"><i class="fas fa-sync-alt"></i> Trigger Enrichment</button>
+                    <button onclick="syncAndCreateJobs()"><i class="fas fa-briefcase"></i> Sync and Create Jobs</button>
+                </div>
+                <div id="systemResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json" data-target="systemResponse">JSON
+                            View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="systemResponse">UI View</button>
+                    </div>
+                    <div id="systemResponse" class="response-content"></div>
+                </div>
+            </section>
+
+            <!-- Bagian ini tidak menampilkan konten, hanya memicu download -->
+            <section id="documentation-section" class="section" style="display: none;">
+                <h3>Dokumentasi API AnimeVerse</h3>
+                <p>Klik "Download API Docs" di sidebar untuk mengunduh dokumentasi ini.</p>
+                <div id="documentationResponseContainer" class="response-container">
+                    <div class="response-tabs">
+                        <button class="response-tab-button active" data-view="json"
+                            data-target="documentationResponse">JSON View</button>
+                        <button class="response-tab-button" data-view="ui" data-target="documentationResponse">UI
+                            View</button>
+                    </div>
+                    <div id="documentationResponse" class="response-content"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+
+    <script>
+        const BASE_URL = 'https://myuzikku.tailfb28fd.ts.net/api/v1'; // Sesuaikan jika port atau host berbeda
+        let token = localStorage.getItem('token') || '';
+        let currentUserId = localStorage.getItem('userId') || '';
+
+        // --- UI & Utility Functions ---
+        function updateAuthStatus() {
+            document.getElementById('currentToken').textContent = token ? token.substring(0, 30) + '...' : '(None)';
+            document.getElementById('currentUserId').textContent = currentUserId || '(None)';
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.sidebar-link[data-section="${sectionId}"]`).classList.add('active');
+        }
+
+        async function apiCall(method, path, body = null, auth = true) {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            if (auth && token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const options = {
+                method: method,
+                headers: headers,
+            };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            console.log(`Sending ${method} request to ${BASE_URL}${path}`);
+            if (body) console.log('Request Body:', body);
+            if (auth && token) console.log('Authorization Token:', token ? token.substring(0, 30) + '...' : '(None)');
+
+            try {
+                const response = await fetch(`${BASE_URL}${path}`, options);
+                const data = await response.json();
+                console.log('API Response:', data);
+                return { ok: response.ok, status: response.status, data: data, path: path }; // Sertakan path untuk logika rendering UI
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                return { ok: false, status: 500, data: { message: error.message }, path: path };
+            }
+        }
+
+        // Fungsi yang diganti nama dan ditingkatkan untuk menampilkan respons dengan view
+        function displayResponseWithViews(elementId, result, requestedView = 'json') {
+            const responseDiv = document.getElementById(elementId);
+            const responseContainer = responseDiv.closest('.response-container');
+
+            // Simpan hasil terbaru ke elemen respons untuk akses oleh pengalih tab
+            responseDiv._currentResult = result;
+
+            responseDiv.className = `response-content ${result.ok ? 'success' : 'error'}`;
+
+            const jsonContent = `<pre>Status: ${result.status}\n${JSON.stringify(result.data, null, 2)}</pre>`;
+            let uiContent = '';
+
+            // Logika untuk merender UI View berdasarkan endpoint dan struktur data
+            if (!result.ok) {
+                uiContent = `<p style="color: var(--error-color);">Error ${result.status}: ${result.data.message || 'Unknown Error'}</p>`;
+            } else if (
+                result.path.includes('/anime') &&
+                (
+                    result.path.includes('/full') ||
+                    result.path.startsWith('/anime?') || // getAnimeList
+                    result.path.includes('/top/anime') ||
+                    result.path.includes('/seasons/now') ||
+                    (result.path.match(/\/anime\/seasons\/\d{4}\/[a-z]+/)) || // getAnimeBySeason
+                    result.path.includes('/recommendations')
+                )
+            ) {
+                // Tangani anime tunggal atau daftar anime
+                const animeData = Array.isArray(result.data.data) ? result.data.data : (result.data.data ? [result.data.data] : []);
+                uiContent = renderAnimeCards(animeData);
+            } else if (result.path.includes('/system/failed-links')) {
+                const failedLinksData = result.data.data;
+                uiContent = renderFailedLinksCards(failedLinksData);
+            } else if (result.path.includes('/system/broken-link-reports')) {
+                const brokenReportsData = result.data.data;
+                uiContent = renderBrokenLinkReportsCards(brokenReportsData);
+            } else if (result.path.includes('/auth') || result.path.includes('/user/profile') || result.path.includes('/user/change-password')) {
+                // Untuk Auth dan Profil Pengguna, daftar kunci-nilai sederhana
+                uiContent = renderKeyValueList(result.data, 'User/Auth Details');
+            } else if (result.path.includes('/anime/genres/anime')) {
+                uiContent = renderKeyValueList(result.data.data, 'Anime Genres', 'name');
+            } else if (result.path.includes('/anime/seasons') && !result.path.includes('now') && !result.path.match(/\/anime\/seasons\/\d{4}\/[a-z]+/)) {
+                uiContent = renderKeyValueList(result.data.data, 'Available Seasons', (item) => `${item.year} ${item.season} (${item.count} anime)`);
+            } else if (result.path.includes('/anime/schedules')) {
+                uiContent = renderScheduleCards(result.data.data);
+            } else if (result.path.includes('/anime') && result.path.includes('/episodes')) {
+                uiContent = renderEpisodeList(result.data);
+            } else if (result.path.includes('/anime') && result.path.includes('/reviews')) {
+                uiContent = renderReviewList(result.data.data);
+            }
+            else {
+                // UI default untuk data lain, bisa ditingkatkan
+                uiContent = `<pre>UI View belum diimplementasikan secara spesifik untuk endpoint ini. Menampilkan data mentah:\n${JSON.stringify(result.data, null, 2)}</pre>`;
+            }
+
+
+            // Render tampilan awal
+            if (requestedView === 'json') {
+                responseDiv.innerHTML = jsonContent;
+            } else {
+                responseDiv.innerHTML = uiContent;
+            }
+
+            // Atur tombol tab aktif
+            responseContainer.querySelectorAll('.response-tab-button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.view === requestedView) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Tambahkan event listener untuk pengalihan tab (jika belum ada, atau direset)
+            // Ini untuk memastikan listener hanya satu kali per tombol per kontainer
+            responseContainer.querySelectorAll('.response-tab-button').forEach(btn => {
+                btn.onclick = () => { // Menggunakan onclick untuk memudahkan penggantian listener
+                    responseContainer.querySelectorAll('.response-tab-button').forEach(innerBtn => innerBtn.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (btn.dataset.view === 'json') {
+                        responseDiv.innerHTML = jsonContent;
+                    } else {
+                        responseDiv.innerHTML = uiContent;
+                    }
+                };
+            });
+        }
+
+
+        // UI View Renderers
+        function renderAnimeCards(animeArray) {
+            if (!animeArray || animeArray.length === 0) {
+                return '<p>No anime data to display in UI View.</p>';
+            }
+
+            let cardsHtml = '<div class="ui-view-cards">';
+            animeArray.forEach(anime => {
+                // Untuk rekomendasi, anime info ada di `entry` object
+                const currentAnime = anime.entry || anime;
+
+                const imageUrl = currentAnime.images?.jpg?.image_url || currentAnime.images?.webp?.image_url || 'https://via.placeholder.com/180x250?text=No+Image';
+                const genres = currentAnime.genres ? currentAnime.genres.map(g => g.name).join(', ') : 'N/A';
+                const synopsis = currentAnime.synopsis ? (currentAnime.synopsis.length > 150 ? currentAnime.synopsis.substring(0, 150) + '...' : currentAnime.synopsis) : 'No synopsis available.';
+                const malId = currentAnime.mal_id;
+                const title = currentAnime.title || 'Unknown Title';
+                const score = currentAnime.score || 'N/A';
+                const status = currentAnime.status || 'N/A';
+                const episodes = currentAnime.episodes || 'N/A';
+
+                cardsHtml += `
+                    <div class="ui-card anime-card">
+                        <img src="${imageUrl}" alt="${title}">
+                        <h4>${title}</h4>
+                        <p><strong>MAL ID:</strong> ${malId || 'N/A'}</p>
+                        <p><strong>Score:</strong> ${score}</p>
+                        <p><strong>Status:</strong> ${status}</p>
+                        <p><strong>Episodes:</strong> ${episodes}</p>
+                        <p><strong>Genres:</strong> ${genres}</p>
+                        <p>${synopsis}</p>
+                        <div class="card-actions">
+                            ${malId ? `<button onclick="populateAnimeIdAndShowDetail('${malId}')"><i class="fas fa-eye"></i> View Details</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            cardsHtml += '</div>';
+            return cardsHtml;
+        }
+
+        function populateAnimeIdAndShowDetail(malId) {
+            document.getElementById('animeId').value = malId;
+            showSection('anime-section');
+            getAnimeFullDetail();
+        }
+
+
+        function renderFailedLinksCards(linksArray) {
+            if (!linksArray || linksArray.length === 0) {
+                return '<p>No failed links to display in UI View.</p>';
+            }
+
+            let cardsHtml = '<div class="ui-view-cards">';
+            linksArray.forEach(link => {
+                cardsHtml += `
+                    <div class="ui-card failed-link-card">
+                        <h4>Failed Link</h4>
+                        <p><strong>ID:</strong> ${link._id}</p>
+                        <p><strong>URL:</strong> <a href="${link.url}" target="_blank">${link.url}</a></p>
+                        <p><strong>Text:</strong> ${link.text || 'N/A'}</p>
+                        <p><strong>Status:</strong> <span style="color: var(--error-color); font-weight: 600;">${link.status || 'failed'}</span></p>
+                        <p><strong>Created At:</strong> ${new Date(link.createdAt).toLocaleString()}</p>
+                        <div class="card-actions">
+                            <button onclick="processFailedLink('${link._id}')"><i class="fas fa-hammer"></i> Process</button>
+                        </div>
+                    </div>
+                `;
+            });
+            cardsHtml += '</div>';
+            return cardsHtml;
+        }
+
+        function processFailedLink(scrapedId) {
+            document.getElementById('manualMatchScrapedId').value = scrapedId;
+            showSection('system-section');
+            document.getElementById('manualMatchScrapedId').focus();
+            // Opsional: gulir ke input
+            document.getElementById('manualMatchScrapedId').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function renderBrokenLinkReportsCards(reportsArray) {
+            if (!reportsArray || reportsArray.length === 0) {
+                return '<p>No broken link reports to display in UI View.</p>';
+            }
+
+            let cardsHtml = '<div class="ui-view-cards">';
+            reportsArray.forEach(report => {
+                cardsHtml += `
+                    <div class="ui-card broken-report-card">
+                        <h4>Broken Link Report (ID: ${report.id})</h4>
+                        <p><strong>Anime ID:</strong> ${report.animeId}</p>
+                        <p><strong>Episode:</strong> ${report.episodeNumber}</p>
+                        <p><strong>Source:</strong> ${report.source}</p>
+                        <p><strong>Description:</strong> ${report.description}</p>
+                        <p><strong>Reported By:</strong> ${report.reportedBy}</p>
+                        <p><strong>Status:</strong> <span style="color: ${report.status === 'pending' ? 'var(--warning-color)' : 'var(--success-color)'}; font-weight: 600;">${report.status}</span></p>
+                        <p><strong>Reported At:</strong> ${new Date(report.createdAt).toLocaleString()}</p>
+                    </div>
+                `;
+            });
+            cardsHtml += '</div>';
+            return cardsHtml;
+        }
+
+        function renderScheduleCards(schedulesArray) {
+            if (!schedulesArray || schedulesArray.length === 0) {
+                return '<p>No weekly schedules to display in UI View.</p>';
+            }
+
+            let cardsHtml = '<div class="ui-view-cards">';
+            schedulesArray.forEach(schedule => {
+                const imageUrl = schedule.images?.jpg?.image_url || 'https://via.placeholder.com/180x250?text=No+Image';
+                cardsHtml += `
+                    <div class="ui-card schedule-card">
+                        <img src="${imageUrl}" alt="${schedule.title}">
+                        <h4>${schedule.title}</h4>
+                        <p><strong>MAL ID:</strong> ${schedule.mal_id}</p>
+                        <p><strong>Episode:</strong> ${schedule.episode}</p>
+                        <p><strong>Air Date:</strong> ${new Date(schedule.air_date).toLocaleString()}</p>
+                        <p><strong>Broadcast:</strong> ${schedule.broadcast?.string || 'N/A'}</p>
+                        <div class="card-actions">
+                            <button onclick="populateAnimeIdAndShowDetail('${schedule.mal_id}')"><i class="fas fa-info-circle"></i> Details</button>
+                        </div>
+                    </div>
+                `;
+            });
+            cardsHtml += '</div>';
+            return cardsHtml;
+        }
+
+        function renderEpisodeList(episodeData) {
+            if (!episodeData || !episodeData.data || episodeData.data.length === 0) {
+                return '<p>No episode data to display in UI View.</p>';
+            }
+
+            let listHtml = `<h4>Episodes for ${episodeData.anime_title} (Total: ${episodeData.total_episodes})</h4><ul style="list-style-type: none; padding-left: 0;">`;
+            episodeData.data.forEach(ep => {
+                const streamLinks = ep.stream_sources && ep.stream_sources.length > 0
+                    ? ep.stream_sources.map(src => `<li>&nbsp;&nbsp;&nbsp;&nbsp;- ${src.source}: <a href="${src.url}" target="_blank">${src.quality} (${src.language})</a></li>`).join('')
+                    : '<li>&nbsp;&nbsp;&nbsp;&nbsp;No stream links available.</li>';
+                listHtml += `
+                    <li>
+                        <i class="fas fa-play-circle" style="color: var(--primary-color); margin-right: 5px;"></i> <strong>Episode ${ep.episode_number}:</strong> ${ep.title}
+                        <ul style="list-style-type: none; padding-left: 15px;">${streamLinks}</ul>
+                    </li>`;
+            });
+            listHtml += '</ul>';
+            return listHtml;
+        }
+
+        function renderReviewList(reviewsArray) {
+            if (!reviewsArray || reviewsArray.length === 0) {
+                return '<p>No reviews to display in UI View.</p>';
+            }
+
+            let listHtml = `<h4>Anime Reviews</h4><ul style="list-style-type: none; padding-left: 0;">`;
+            reviewsArray.forEach(review => {
+                listHtml += `
+                    <li style="margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); padding-bottom: 10px;">
+                        <i class="fas fa-star" style="color: var(--warning-color); margin-right: 5px;"></i> <strong>Rating:</strong> ${review.rating}/10 by <strong>${review.username || review.userId}</strong>
+                        <p style="margin-left: 20px; font-style: italic;">"${review.comment}"</p>
+                        <small style="margin-left: 20px; color: var(--secondary-color);">Reviewed on: ${new Date(review.createdAt).toLocaleString()}</small>
+                    </li>`;
+            });
+            listHtml += '</ul>';
+            return listHtml;
+        }
+
+
+        function renderKeyValueList(data, title, keyExtractor = null) {
+            if (!data) {
+                return `<p>No data for ${title} to display in UI View.</p>`;
+            }
+
+            let html = `<h4>${title}</h4><ul style="list-style-type: none; padding-left: 0;">`;
+
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    const displayValue = keyExtractor ? (typeof keyExtractor === 'function' ? keyExtractor(item) : item[keyExtractor]) : JSON.stringify(item);
+                    html += `<li><i class="fas fa-dot-circle" style="color: var(--primary-color); margin-right: 5px;"></i> ${displayValue}</li>`;
+                });
+            } else if (typeof data === 'object') {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        let value = data[key];
+                        // Menangani objek atau array bersarang secara lebih baik
+                        if (typeof value === 'object' && value !== null) {
+                            value = JSON.stringify(value, null, 2); // Stringify dengan indentasi
+                            html += `<li><strong>${key}:</strong> <pre style="margin: 0; padding: 5px; background-color: #f0f0f0; border-radius: 4px; overflow-x: auto;">${value}</pre></li>`;
+                        } else {
+                            html += `<li><strong>${key}:</strong> ${value}</li>`;
+                        }
+                    }
+                }
+            } else {
+                html += `<li>${data}</li>`;
+            }
+
+            html += '</ul>';
+            return html;
+        }
+
+
+        // --- AUTH FUNCTIONS ---
+        async function register() {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const result = await apiCall('POST', '/auth/register', { username, email, password }, false);
+            if (result.ok) {
+                token = result.data.token;
+                currentUserId = result.data.user.id;
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', currentUserId);
+                updateAuthStatus();
+            }
+            displayResponseWithViews('authResponse', result, 'ui'); // Default ke UI view untuk auth
+        }
+
+        async function login() {
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const result = await apiCall('POST', '/auth/login', { email, password }, false);
+            if (result.ok) {
+                token = result.data.token;
+                currentUserId = result.data.user.id;
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', currentUserId);
+                updateAuthStatus();
+            }
+            displayResponseWithViews('authResponse', result, 'ui');
+        }
+
+        function clearToken() {
+            token = '';
+            currentUserId = '';
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            updateAuthStatus();
+            displayResponseWithViews('authResponse', { ok: true, status: 200, data: { message: 'Logged out successfully.' } }, 'ui');
+        }
+
+        // --- USER PROFILE FUNCTIONS ---
+        async function getProfile() {
+            const result = await apiCall('GET', '/user/profile');
+            displayResponseWithViews('userProfileResponse', result, 'ui');
+        }
+
+        async function updateProfile() {
+            const username = document.getElementById('updateUsername').value;
+            const email = document.getElementById('updateEmail').value;
+            const avatar = document.getElementById('updateAvatar').value;
+            const bio = document.getElementById('updateBio').value;
+            const body = {};
+            if (username) body.username = username;
+            if (email) body.email = email;
+            if (avatar) body.avatar = avatar;
+            if (bio) body.bio = bio;
+
+            const result = await apiCall('PUT', '/user/profile', body);
+            displayResponseWithViews('userProfileResponse', result, 'ui');
+        }
+
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            if (!currentPassword || !newPassword) {
+                displayResponseWithViews('userProfileResponse', { ok: false, status: 400, data: { message: 'Current and New Password are required.' } });
+                return;
+            }
+            const result = await apiCall('PUT', '/user/change-password', { currentPassword, newPassword });
+            displayResponseWithViews('userProfileResponse', result, 'ui');
+        }
+
+
+        // --- ANIME FUNCTIONS ---
+        async function getAnimeList() {
+            const q = document.getElementById('searchQuery').value;
+            const page = document.getElementById('page').value;
+            const limit = document.getElementById('limit').value;
+            const genres = document.getElementById('genres').value;
+            const status = document.getElementById('status').value;
+            const rating = document.getElementById('rating').value;
+            const orderBy = document.getElementById('orderBy').value;
+            const sort = document.getElementById('sort').value;
+            const minScore = document.getElementById('minScore').value;
+            const maxScore = document.getElementById('maxScore').value;
+            const minMembers = document.getElementById('minMembers').value;
+
+            let queryParams = new URLSearchParams();
+            if (q) queryParams.append('q', q);
+            if (page) queryParams.append('page', page);
+            if (limit) queryParams.append('limit', limit);
+            if (genres) queryParams.append('genres', genres);
+            if (status) queryParams.append('status', status);
+            if (rating) queryParams.append('rating', rating);
+            if (orderBy) queryParams.append('order_by', orderBy);
+            if (sort) queryParams.append('sort', sort);
+            if (minScore) queryParams.append('min_score', minScore);
+            if (maxScore) queryParams.append('max_score', maxScore);
+            if (minMembers) queryParams.append('min_members', minMembers);
+
+            const result = await apiCall('GET', `/anime?${queryParams.toString()}`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getAnimeFullDetail() {
+            const animeId = document.getElementById('animeId').value;
+            if (!animeId) {
+                displayResponseWithViews('animeResponse', { ok: false, status: 400, data: { message: 'Anime MAL ID is required.' } });
+                return;
+            }
+            const result = await apiCall('GET', `/anime/${animeId}/full`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getAnimeEpisodes() {
+            const animeId = document.getElementById('animeId').value;
+            if (!animeId) {
+                displayResponseWithViews('animeResponse', { ok: false, status: 400, data: { message: 'Anime MAL ID is required.' } });
+                return;
+            }
+            const result = await apiCall('GET', `/anime/${animeId}/episodes`);
+            displayResponseWithViews('animeResponse', result, 'ui'); // Episodes mungkin memerlukan UI kustom, untuk saat ini UI umum
+        }
+
+        async function getTopAnime() {
+            const limit = document.getElementById('limit').value;
+            const result = await apiCall('GET', `/anime/top/anime?limit=${limit}`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getAllSeasons() {
+            const result = await apiCall('GET', `/anime/seasons`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getSeasonNowAnime() {
+            const limit = document.getElementById('limit').value;
+            const result = await apiCall('GET', `/anime/seasons/now?limit=${limit}`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getAnimeBySeason() {
+            const year = document.getElementById('seasonYear').value;
+            const season = document.getElementById('seasonName').value;
+            const page = document.getElementById('page').value;
+            const limit = document.getElementById('limit').value;
+            if (!year || !season) {
+                displayResponseWithViews('animeResponse', { ok: false, status: 400, data: { message: 'Year and Season are required for Anime By Season.' } });
+                return;
+            }
+            const result = await apiCall('GET', `/anime/seasons/${year}/${season}?page=${page}&limit=${limit}`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getWeeklySchedules() {
+            const result = await apiCall('GET', `/anime/schedules`);
+            displayResponseWithViews('animeResponse', result, 'ui'); // Jadwal mungkin memerlukan UI kustom, untuk saat ini UI umum
+        }
+
+        async function getAnimeGenres() {
+            const result = await apiCall('GET', `/anime/genres/anime`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        async function getAnimeRecommendations() {
+            const animeId = document.getElementById('animeId').value;
+            if (!animeId) {
+                displayResponseWithViews('animeResponse', { ok: false, status: 400, data: { message: 'Anime MAL ID is required for recommendations.' } });
+                return;
+            }
+            const result = await apiCall('GET', `/anime/${animeId}/recommendations`);
+            displayResponseWithViews('animeResponse', result, 'ui');
+        }
+
+        // --- REVIEWS FUNCTIONS ---
+        async function addReview() {
+            const animeId = document.getElementById('reviewAnimeId').value;
+            const rating = parseInt(document.getElementById('reviewRating').value, 10);
+            const comment = document.getElementById('reviewComment').value;
+            if (!animeId || !rating || !comment) {
+                displayResponseWithViews('reviewResponse', { ok: false, status: 400, data: { message: 'Anime ID, Rating, and Comment are required to add a review.' } });
+                return;
+            }
+            const result = await apiCall('POST', `/anime/${animeId}/reviews`, { rating, comment });
+            displayResponseWithViews('reviewResponse', result, 'ui');
+        }
+
+        async function getAnimeReviews() {
+            const animeId = document.getElementById('reviewAnimeId').value;
+            if (!animeId) {
+                displayResponseWithViews('reviewResponse', { ok: false, status: 400, data: { message: 'Anime MAL ID is required to get reviews.' } });
+                return;
+            }
+            const result = await apiCall('GET', `/anime/${animeId}/reviews`);
+            displayResponseWithViews('reviewResponse', result, 'ui'); // Ulasan mungkin memerlukan UI kustom, untuk saat ini UI umum
+        }
+
+        // --- BROKEN LINK REPORT FUNCTIONS ---
+        async function reportBrokenLink() {
+            const animeId = document.getElementById('reportAnimeId').value;
+            const episodeNumber = document.getElementById('reportEpisodeNumber').value;
+            const source = document.getElementById('reportSource').value;
+            const description = document.getElementById('reportDescription').value;
+            if (!animeId || !episodeNumber || !source || !description) {
+                displayResponseWithViews('brokenLinkResponse', { ok: false, status: 400, data: { message: 'All fields are required to report a broken link.' } });
+                return;
+            }
+            const result = await apiCall('POST', `/anime/${animeId}/episode/${episodeNumber}/report`, { source, description });
+            displayResponseWithViews('brokenLinkResponse', result, 'ui');
+        }
+
+        // --- SYSTEM FUNCTIONS ---
+        async function getSystemStats() {
+            const result = await apiCall('GET', '/system/stats');
+            displayResponseWithViews('systemResponse', result, 'ui');
+        }
+
+        async function getFailedLinks() {
+            const result = await apiCall('GET', '/system/failed-links');
+            displayResponseWithViews('systemResponse', result, 'ui');
+        }
+
+        async function manualMatch() {
+            const scrapedId = document.getElementById('manualMatchScrapedId').value;
+            const malId = document.getElementById('manualMatchMalId').value;
+            if (!scrapedId || !malId) {
+                displayResponseWithViews('systemResponse', { ok: false, status: 400, data: { message: 'Scraped Link ID and MAL ID are required.' } });
+                return;
+            }
+            const result = await apiCall('POST', `/system/match/${scrapedId}/${malId}`);
+            displayResponseWithViews('systemResponse', result, 'ui');
+
+            // Otomatis Get Failed Links setelah Manual Match berhasil
+            if (result.ok) {
+                console.log('Manual match successful, fetching failed links...');
+                getFailedLinks(); // Secara otomatis memanggil getFailedLinks
+            }
+        }
+
+        async function triggerScraper() {
+            const result = await apiCall('POST', '/system/rescraping', {});
+            displayResponseWithViews('systemResponse', result, 'ui');
+        }
+
+        async function triggerEnrichment() {
+            const result = await apiCall('POST', '/system/sync-data', {});
+            displayResponseWithViews('systemResponse', result, 'ui');
+        }
+
+        async function syncAndCreateJobs() {
+            const result = await apiCall('POST', '/system/sync-jobs', {});
+            displayResponseWithViews('systemResponse', result, 'ui');
+        }
+
+        async function getBrokenLinkReports() {
+            const result = await apiCall('GET', '/system/broken-link-reports'); // Hanya Admin
+            displayResponseWithViews('systemResponse', result, 'ui');
+        }
+
+        // --- Documentation Generation ---
+        function generateDocumentation() {
+            // Perhatikan URL telah diperbarui sesuai yang ada di dokumentasi
+            const BASE_URL_DOCS = "https://myuzikku.tailfb28fd.ts.net/api/v1";
+
+            const docContent = `
+# Dokumentasi API AnimeVerse Backend
+
+Dokumentasi ini menyediakan detail penggunaan endpoint API AnimeVerse, termasuk method HTTP, path, parameter, contoh request body, dan contoh respons JSON.
+
+Base URL: \`${BASE_URL_DOCS}\`
+
+---
+
+## 1. Auth (Otentikasi Pengguna)
+
+### 1.1. Register User
+
+-   **Deskripsi**: Mendaftarkan pengguna baru ke sistem.
+-   **Method**: \`POST\`
+-   **Path**: \`/auth/register\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Contoh Request Body**:
+    \`\`\`json
+    {
+        "username": "newuser",
+        "email": "newuser@example.com",
+        "password": "strongpassword123"
+    }
+    \`\`\`
+-   **Contoh Respons Sukses (Status 201 Created)**:
+    \`\`\`json
+    {
+        "message": "User registered successfully",
+        "user": {
+            "id": "651a2b3c4d5e6f7a8b9c0d1e",
+            "username": "newuser",
+            "email": "newuser@example.com",
+            "avatar": null,
+            "bio": null,
+            "role": "user",
+            "createdAt": "2023-10-27T10:00:00.000Z"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTFhMmIzYzRkNWU2ZjdhOGI5YzBkMWUiLCJpYXQiOjE2OTg0Nzk2MDAsImV4cCI6MTY5ODU2NjAwMH0.YOUR_JWT_TOKEN_HERE"
+    }
+    \`\`\`
+-   **Contoh Respons Gagal (Status 400 Bad Request)**:
+    \`\`\`json
+    {
+        "message": "Email already registered"
+    }
+    \`\`\`
+
+### 1.2. Login User
+
+-   **Deskripsi**: Melakukan login pengguna yang sudah terdaftar dan mengembalikan token otentikasi.
+-   **Method**: \`POST\`
+-   **Path**: \`/auth/login\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Contoh Request Body**:
+    \`\`\`json
+    {
+        "email": "test@example.com",
+        "password": "password123"
+    }
+    \`\`\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "message": "Logged in successfully",
+        "user": {
+            "id": "651a2b3c4d5e6f7a8b9c0d1e",
+            "username": "testuser",
+            "email": "test@example.com",
+            "avatar": "https://example.com/avatar.png",
+            "bio": "I love anime!",
+            "role": "user"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTFhMmIzYzRkNWU2ZjdhOGI5YzBkMWUiLCJpYXQiOjE2OTg0Nzk2MDAsImV4cCI6MTY5ODU2NjAwMH0.YOUR_JWT_TOKEN_HERE"
+    }
+    \`\`\`
+-   **Contoh Respons Gagal (Status 401 Unauthorized)**:
+    \`\`\`json
+    {
+        "message": "Invalid credentials"
+    }
+    \`\`\`
+
+---
+
+## 2. User Profile (Profil Pengguna)
+
+### 2.1. Get User Profile
+
+-   **Deskripsi**: Mengambil data profil pengguna yang sedang login.
+-   **Method**: \`GET\`
+-   **Path**: \`/user/profile\`
+-   **Otentikasi**: Diperlukan (Header: \`Authorization: Bearer <token>\`).
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "id": "651a2b3c4d5e6f7a8b9c0d1e",
+        "username": "testuser",
+        "email": "test@example.com",
+        "avatar": "https://example.com/avatar.png",
+        "bio": "I love anime!",
+        "role": "user",
+        "createdAt": "2023-10-27T10:00:00.000Z",
+        "updatedAt": "2023-10-27T11:00:00.000Z"
+    }
+    \`\`\`
+-   **Contoh Respons Gagal (Status 401 Unauthorized)**:
+    \`\`\`json
+    {
+        "message": "Unauthorized"
+    }
+    \`\`\`
+
+### 2.2. Update User Profile
+
+-   **Deskripsi**: Memperbarui informasi profil pengguna yang sedang login.
+-   **Method**: \`PUT\`
+-   **Path**: \`/user/profile\`
+-   **Otentikasi**: Diperlukan.
+-   **Contoh Request Body (semua properti opsional)**:
+    \`\`\`json
+    {
+        "username": "new_test_user",
+        "email": "new_email@example.com",
+        "avatar": "https://example.com/new_avatar.jpg",
+        "bio": "Updated bio here."
+    }
+    \`\`\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "message": "Profile updated successfully",
+        "user": {
+            "id": "651a2b3c4d5e6f7a8b9c0d1e",
+            "username": "new_test_user",
+            "email": "new_email@example.com",
+            "avatar": "https://example.com/new_avatar.jpg",
+            "bio": "Updated bio here.",
+            "role": "user",
+            "createdAt": "2023-10-27T10:00:00.000Z",
+            "updatedAt": "2023-10-27T11:30:00.000Z"
+        }
+    }
+    \`\`\`
+
+### 2.3. Change User Password
+
+-   **Deskripsi**: Mengubah kata sandi pengguna yang sedang login.
+-   **Method**: \`PUT\`
+-   **Path**: \`/user/change-password\`
+-   **Otentikasi**: Diperlukan.
+-   **Contoh Request Body**:
+    \`\`\`json
+    {
+        "currentPassword": "password123",
+        "newPassword": "superstrongnewpassword"
+    }
+    \`\`\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "message": "Password changed successfully"
+    }
+    \`\`\`
+-   **Contoh Respons Gagal (Status 400 Bad Request)**:
+    \`\`\`json
+    {
+        "message": "Invalid current password"
+    }
+    \`\`\`
+
+---
+
+## 3. Anime
+
+### 3.1. Get Anime List
+
+-   **Deskripsi**: Mengambil daftar anime dengan berbagai filter pencarian.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Query Params (semua opsional)**:
+    -   \`q\`: String untuk pencarian judul anime.
+    -   \`page\`: Nomor halaman (default: 1).
+    -   \`limit\`: Jumlah item per halaman (default: 10).
+    -   \`genres\`: Daftar MAL ID genre, dipisahkan koma (misal: \`1,2,3\`).
+    -   \`status\`: Status tayang (misal: \`currently airing\`, \`finished airing\`, \`not yet aired\`).
+    -   \`rating\`: Rating usia (misal: \`Pg-13\`, \`R - 17+\`).
+    -   \`order_by\`: Kriteria pengurutan (misal: \`popularity\`, \`score\`, \`latest\`).
+    -   \`sort\`: Arah pengurutan (\`asc\` atau \`desc\`, default: \`desc\`).
+    -   \`min_score\`: Skor minimum.
+    -   \`max_score\`: Skor maksimum.
+    -   \`min_members\`: Jumlah anggota minimum.
+-   **Contoh query list terbaru+finished airing (Last Completed)**: \`/anime?order_by=latest&status=finished%20airing&page=1&limit=10\`
+
+-   **Contoh Query**: \`/anime?q=naruto&page=1&limit=5&order_by=score&sort=desc\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "pagination": {
+            "last_visible_page": 2,
+            "has_next_page": true,
+            "current_page": 1,
+            "items": {
+                "count": 5,
+                "total": 12,
+                "per_page": 5
+            }
+        },
+        "data": [
+            {
+                "mal_id": 20,
+                "title": "Naruto",
+                "images": {
+                    "jpg": { "image_url": "...", "small_image_url": "...", "large_image_url": "..." }
+                },
+                "episodes": 220,
+                "status": "Finished Airing",
+                "score": 7.9,
+                "genres": [{ "mal_id": 1, "name": "Action" }],
+                "synopsis": "Naruto Uzumaki, a mischievous adolescent ninja...",
+                "year": 2002
+            },
+            {
+                "mal_id": 1735,
+                "title": "Naruto: Shippuuden",
+                "images": { /* ... */ },
+                "episodes": 500,
+                "status": "Finished Airing",
+                "score": 8.1,
+                "genres": [{ "mal_id": 1, "name": "Action" }],
+                "synopsis": "It has been two and a half years since Naruto Uzumaki left Konohagakure...",
+                "year": 2007
+            }
+        ]
+    }
+    \`\`\`
+
+### 3.2. Get Anime Full Detail
+
+-   **Deskripsi**: Mengambil detail lengkap satu anime berdasarkan MAL ID-nya, termasuk informasi streaming dan metadata lengkap.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/{animeId}/full\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Path Params**:
+    -   \`animeId\`: MAL ID dari anime yang dicari (contoh: \`54899\`).
+-   **Contoh Path**: \`/anime/54899/full\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": {
+            "_id": "68cf22407e6884c7bef1657e",
+            "mal_id": 54899,
+            "__v": 0,
+            "title": "Wanderer",
+            "title_english": null,
+            "title_japanese": "WANDERER",
+            "title_synonyms": [],
+            "titles": [
+                {"type": "Default", "title": "Wanderer"},
+                {"type": "Japanese", "title": "WANDERER"}
+            ],
+            "aired": {
+                "from": "2023-03-24T00:00:00+00:00",
+                "to": null,
+                "prop": {"from": {"day": 24, "month": 3, "year": 2023}},
+                "string": "Mar 24, 2023"
+            },
+            "airing": false,
+            "status": "Finished Airing",
+            "episodes": 1,
+            "duration": "2 min",
+            "averageRating": 0,
+            "score": 6.09,
+            "scored_by": 137,
+            "members": 252,
+            "popularity": 21387,
+            "rank": null,
+            "rating": "PG-13 - Teens 13 or older",
+            "synopsis": "Music video for the song Wanderer by Ren Zotto.",
+            "background": "",
+            "source": "Mixed media",
+            "genres": [],
+            "demographics": [],
+            "themes": [
+                {"mal_id": 19, "type": "anime", "name": "Music", "url": "https://myanimelist.net/anime/genre/19/Music"}
+            ],
+            "explicit_genres": [],
+            "relations": [],
+            "producers": [],
+            "licensors": [],
+            "studios": [
+                {"mal_id": 2605, "type": "anime", "name": "Tonari Animation", "url": "https://myanimelist.net/anime/producer/2605/Tonari_Animation"}
+            ],
+            "favorites": 0,
+            "reviewsCount": 0,
+            "season": null,
+            "year": null,
+            "type": "Music",
+            "images": {
+                "jpg": {
+                    "image_url": "https://cdn.myanimelist.net/images/anime/1765/135331.jpg",
+                    "small_image_url": "https://cdn.myanimelist.net/images/anime/1765/135331t.jpg",
+                    "large_image_url": "https://cdn.myanimelist.net/images/anime/1765/135331l.jpg"
+                },
+                "webp": {
+                    "image_url": "https://cdn.myanimelist.net/images/anime/1765/135331.webp",
+                    "small_image_url": "https://cdn.myanimelist.net/images/anime/1765/135331t.webp",
+                    "large_image_url": "https://cdn.myanimelist.net/images/anime/1765/135331l.webp"
+                }
+            },
+            "trailer": {
+                "youtube_id": null,
+                "url": null,
+                "embed_url": null
+            },
+            "theme": {"openings": [], "endings": []},
+            "external": [
+                {"name": "YouTube", "url": "https://www.youtube.com/watch?v=oIKBBkd8It8&ab_channel=RenZotto%E3%80%90NIJISANJIEN%E3%80%91"}
+            ],
+            "streaming": [],
+            "url": "https://myanimelist.net/anime/54899/Wanderer",
+            "createdAt": "2025-09-20T21:53:01.752Z",
+            "updatedAt": "2025-09-20T21:53:01.752Z",
+            "last_updated": "2025-09-20T21:53:01.751Z",
+            "approved": true,
+            "base_links": [
+                {"url": "https://v1.samehadaku.how/anime/yandere-dark-elf/", "source": "samehadaku", "_id": "68cf223dcab4dfbc5c35dfb7"}
+            ],
+            "user_data": null,
+            "stream_links": []
+            // "reviews": [] // Array review ini biasanya diambil secara terpisah
+        }
+    }
+    \`\`\`
+
+### 3.3. Get Anime Episodes
+
+-   **Deskripsi**: Mengambil daftar episode anime dengan informasi ketersediaan streaming links.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/{animeId}/episodes\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Path Params**:
+    -   \`animeId\`: MAL ID dari anime yang dicari (contoh: \`54899\`).
+-   **Query Params (opsional)**:
+    -   \`page\`: Nomor halaman (default: 1, untuk anime dengan banyak episode).
+    -   \`limit\`: Episode per halaman (default: 25, maximum: 100).
+-   **Contoh Path**: \`/anime/54899/episodes\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "anime_title": "Wanderer",
+        "total_episodes": 1,
+        "data": [
+            {
+                "episode_number": 1,
+                "title": "Wanderer Episode 1",
+                "has_stream_links": false,
+                "stream_sources": []
+            }
+        ]
+    }
+    \`\`\`
+-   **Contoh Respons untuk Anime dengan Streaming Links**:
+    \`\`\`json
+    {
+        "anime_title": "Naruto",
+        "total_episodes": 220,
+        "data": [
+            {
+                "episode_number": 1,
+                "title": "Naruto Episode 1",
+                "has_stream_links": true,
+                "stream_sources": [
+                    {
+                        "source": "Pucuk",
+                        "url": "https://pucuk.com/naruto-ep1",
+                        "quality": "720p",
+                        "language": "Sub Indo"
+                    },
+                    {
+                        "source": "Mega",
+                        "url": "https://mega.nz/file/naruto-ep1",
+                        "quality": "480p",
+                        "language": "Sub Indo"
+                    }
+                ]
+            }
+        ]
+    }
+    \`\`\`
+-   **Field Penjelasan**:
+    - \`anime_title\`: Judul anime
+    - \`total_episodes\`: Total jumlah episode
+    - \`data\`: Array episode dengan:
+      - \`episode_number\`: Nomor episode (1, 2, 3, ...)
+      - \`title\`: Judul episode (format: "{Anime Title} Episode {Number}")
+      - \`has_stream_links\`: Boolean, apakah episode punya streaming links
+      - \`stream_sources\`: Array sumber streaming (kosong jika \`has_stream_links: false\`)
+    \`\`\`
+
+### 3.4. Get Top Anime
+
+-   **Deskripsi**: Mengambil daftar anime teratas berdasarkan popularitas, skor, atau kriteria lainnya.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/top/anime\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Query Params**:
+    -   \`page\`: Nomor halaman (default: 1).
+    -   \`limit\`: Jumlah item per halaman (default: 10, maximum: 50).
+    -   \`type\`: Tipe ranking. Valid: \`all\`, \`airing\`, \`upcoming\`, \`favorite\`, \`byPopularity\` (default: \`all\`).
+-   **Contoh Query**: \`/anime/top/anime?type=airing&limit=5&page=1\`
+-   **Contoh Query dengan order_by**: \`/anime/top/anime?limit=10&order_by=popularity&sort=desc\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "pagination": {
+            "last_visible_page": 10,
+            "has_next_page": true,
+            "current_page": 1,
+            "items": {
+                "count": 5,
+                "total": 50,
+                "per_page": 5
+            }
+        },
+        "data": [
+            {
+                "mal_id": 5114,
+                "title": "Fullmetal Alchemist: Brotherhood",
+                "title_english": "Fullmetal Alchemist: Brotherhood",
+                "score": 9.10,
+                "popularity": 1,
+                "rank": 1,
+                "members": 2500000,
+                "episodes": 64,
+                "status": "Finished Airing",
+                "images": {
+                    "jpg": {
+                        "image_url": "https://cdn.myanimelist.net/images/anime/1223/96541.jpg"
+                    }
+                },
+                "synopsis": "Alchemy is one of the quasi-sciences that gave rise to modern chemistry...",
+                "genres": [
+                    {"mal_id": 2, "name": "Adventure"},
+                    {"mal_id": 22, "name": "Drama"}
+                ],
+                "year": 2009
+            }
+        ]
+    }
+    \`\`\`
+
+### 3.5. Get All Seasons
+
+-   **Deskripsi**: Mengambil daftar semua musim anime yang tersedia dalam database.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/seasons\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": [
+            {
+                "year": 2025,
+                "season": "winter",
+                "count": 100
+            },
+            {
+                "year": 2025,
+                "season": "spring",
+                "count": 80
+            },
+            {
+                "year": 2024,
+                "season": "fall",
+                "count": 120
+            }
+        ]
+    }
+    \`\`\`
+
+### 3.6. Get Season Now Anime
+
+-   **Deskripsi**: Mengambil daftar anime yang sedang tayang pada musim saat ini.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/seasons/now\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Query Params**:
+    -   \`page\`: Nomor halaman (default: 1).
+    -   \`limit\`: Jumlah item per halaman (default: 10, maximum: 50).
+    -   \`sort\`: Arah pengurutan (\`asc\` atau \`desc\`, default: \`desc\`).
+    -   \`order_by\`: Kriteria pengurutan. Valid: \`popularity\`, \`score\`.
+-   **Contoh Query**: \`/anime/seasons/now?page=1&limit=20&sort=desc\`
+-   **Contoh Query dengan order_by**: \`/anime/seasons/now?limit=10&order_by=popularity&sort=desc\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "pagination": {
+            "last_visible_page": 3,
+            "has_next_page": true,
+            "current_page": 1,
+            "items": {
+                "count": 20,
+                "total": 45,
+                "per_page": 20
+            }
+        },
+        "data": [
+            {
+                "mal_id": 56960,
+                "title": "Frieren: Beyond Journey's End",
+                "title_english": "Frieren: Beyond Journey's End",
+                "score": 9.25,
+                "members": 800000,
+                "episodes": 28,
+                "status": "Currently Airing",
+                "season": "fall",
+                "year": 2023,
+                "images": {
+                    "jpg": {
+                        "image_url": "https://cdn.myanimelist.net/images/anime/1917/137232.jpg"
+                    }
+                },
+                "genres": [
+                    {"mal_id": 2, "name": "Adventure"},
+                    {"mal_id": 8, "name": "Drama"}
+                ]
+            }
+        ]
+    }
+    \`\`\`
+
+### 3.7. Get Anime By Season
+
+-   **Deskripsi**: Mengambil daftar anime berdasarkan tahun dan musim tertentu.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/seasons/{year}/{season}\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Path Params**:
+    -   \`year\`: Tahun musim (contoh: \`2024\`).
+    -   \`season\`: Nama musim dalam **lowercase**. Valid: \`winter\`, \`spring\`, \`summer\`, \`fall\`.
+-   **Query Params**:
+    -   \`page\`: Nomor halaman (default: 1).
+    -   \`limit\`: Jumlah item per halaman (default: 10, maximum: 50).
+-   **Contoh Path**: \`/anime/seasons/2024/winter?page=1&limit=5\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "pagination": {
+            "last_visible_page": 4,
+            "has_next_page": true,
+            "current_page": 1,
+            "items": {
+                "count": 5,
+                "total": 18,
+                "per_page": 5
+            }
+        },
+        "data": [
+            {
+                "mal_id": 53049,
+                "title": "Solo Leveling",
+                "title_english": "Solo Leveling",
+                "score": 8.3,
+                "members": 650000,
+                "episodes": 12,
+                "status": "Finished Airing",
+                "season": "winter",
+                "year": 2024,
+                "images": {
+                    "jpg": {
+                        "image_url": "https://cdn.myanimelist.net/images/anime/1935/161210.jpg"
+                    }
+                },
+                "genres": [
+                    {"mal_id": 1, "name": "Action"},
+                    {"mal_id": 2, "name": "Adventure"}
+                ]
+            }
+        ]
+    }
+    \`\`\`
+
+### 3.8. Get Weekly Schedules
+
+-   **Deskripsi**: Mengambil jadwal tayang anime mingguan berdasarkan hari dalam seminggu.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/schedules\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "pagination": {
+            "last_visible_page": 1,
+            "has_next_page": false,
+            "current_page": 1,
+            "items": {
+                "count": 2,
+                "total": 2,
+                "per_page": 10
+            }
+        },
+        "data": [
+            {
+                "mal_id": 12345,
+                "title": "Anime A",
+                "episode": "Episode 12",
+                "air_date": "2025-01-06T00:00:00+09:00",
+                "images": {
+                    "jpg": {
+                        "image_url": "https://cdn.myanimelist.net/images/anime/1234/12345.jpg"
+                    }
+                },
+                "broadcast": {
+                    "day": "Monday",
+                    "time": "00:00",
+                    "timezone": "JST",
+                    "string": "Mondays at 00:00 (JST)"
+                }
+            },
+            {
+                "mal_id": 67890,
+                "title": "Anime B",
+                "episode": "Episode 8",
+                "air_date": "2025-01-07T23:30:00+09:00",
+                "images": {
+                    "jpg": {
+                        "image_url": "https://cdn.myanimelist.net/images/anime/5678/67890.jpg"
+                    }
+                },
+                "broadcast": {
+                    "day": "Tuesday",
+                    "time": "23:30",
+                    "timezone": "JST",
+                    "string": "Tuesdays at 23:30 (JST)"
+                }
+            }
+        ]
+    }
+    \`\`\`
+
+### 3.9. Get Anime Genres
+
+-   **Deskripsi**: Mengambil daftar genre anime yang tersedia untuk filtering.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/genres/anime\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": [
+            { "mal_id": 1, "name": "Action" },
+            { "mal_id": 2, "name": "Adventure" },
+            { "mal_id": 4, "name": "Comedy" },
+            { "mal_id": 8, "name": "Drama" }
+        ]
+    }
+    \`\`\`
+
+### 3.10. Get Anime Recommendations
+
+-   **Deskripsi**: Mengambil rekomendasi anime berdasarkan anime tertentu. **Berdasarkan similarity dan user voting dari MAL**.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/{animeId}/recommendations\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Path Params**:
+    -   \`animeId\`: MAL ID dari anime yang dicari (contoh: \`1\`).
+-   **Contoh Path**: \`/anime/1/recommendations\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": [
+            {
+                "entry": {
+                    "mal_id": 5,
+                    "url": "https://myanimelist.net/anime/5/Cowboy_Bebop__Tengoku_no_Tobira",
+                    "images": {
+                        "jpg": {
+                            "image_url": "https://cdn.myanimelist.net/images/anime/4/19644.jpg"
+                        }
+                    },
+                    "title": "Cowboy Bebop: The Movie",
+                    "type": "Movie",
+                    "score": 8.35,
+                    "members": 800000
+                }
+            },
+            {
+                "entry": {
+                    "mal_id": 3333,
+                    "url": "https://myanimelist.net/anime/3333/Darker_than_Black__Kuro_no_Keiyakusha",
+                    "images": {
+                        "jpg": {
+                            "image_url": "https://cdn.myanimelist.net/images/anime/6/73299.jpg"
+                        }
+                    },
+                    "title": "Darker than Black",
+                    "type": "TV",
+                    "score": 8.05,
+                    "members": 900000
+                }
+            }
+        ]
+    }
+    \`\`\`
+
+---
+
+## 4. Reviews (Ulasan)
+
+### 4.1. Add Review for Anime
+
+-   **Deskripsi**: Menambahkan ulasan baru untuk anime tertentu.
+-   **Method**: \`POST\`
+-   **Path**: \`/anime/{animeId}/reviews\`
+-   **Otentikasi**: Diperlukan.
+-   **Path Params**:
+    -   \`animeId\`: MAL ID anime yang akan diulas.
+-   **Contoh Request Body**:
+    \`\`\`json
+    {
+        "rating": 9,
+        "comment": "Anime ini luar biasa! Ceritanya mendalam dan animasinya indah."
+    }
+    \`\`\`
+-   **Contoh Respons Sukses (Status 201 Created)**:
+    \`\`\`json
+    {
+        "message": "Review added successfully",
+        "review": {
+            "id": "review_id_123",
+            "animeId": "1",
+            "userId": "651a2b3c4d5e6f7a8b9c0d1e",
+            "rating": 9,
+            "comment": "Anime ini luar biasa! Ceritanya mendalam dan animasinya indah.",
+            "createdAt": "2023-10-27T12:00:00.000Z"
+        }
+    }
+    \`\`\`
+
+### 4.2. Get Anime Reviews
+
+-   **Deskripsi**: Mengambil semua ulasan untuk anime tertentu.
+-   **Method**: \`GET\`
+-   **Path**: \`/anime/{animeId}/reviews\`
+-   **Otentikasi**: Tidak diperlukan.
+-   **Path Params**:
+    -   \`animeId\`: MAL ID anime yang ulasannya ingin dilihat.
+-   **Contoh Path**: \`/anime/1/reviews\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": [
+            {
+                "id": "review_id_123",
+                "animeId": "1",
+                "userId": "user_id_xyz",
+                "username": "reviewer_user",
+                "rating": 9,
+                "comment": "Anime ini luar biasa! Ceritanya mendalam dan animasinya indah.",
+                "createdAt": "2023-10-27T12:00:00.000Z"
+            },
+            {
+                "id": "review_id_456",
+                "animeId": "1",
+                "userId": "user_id_abc",
+                "username": "another_fan",
+                "rating": 8,
+                "comment": "Sangat direkomendasikan, meskipun beberapa episode agak lambat.",
+                "createdAt": "2023-10-27T11:00:00.000Z"
+            }
+        ]
+    }
+    \`\`\`
+
+---
+
+## 5. Broken Link Report (Laporan Link Rusak)
+
+### 5.1. Report Broken Link
+
+-   **Deskripsi**: Melaporkan link episode anime yang rusak.
+-   **Method**: \`POST\`
+-   **Path**: \`/anime/{animeId}/episode/{episodeNumber}/report\`
+-   **Otentikasi**: Diperlukan.
+-   **Path Params**:
+    -   \`animeId\`: MAL ID anime yang memiliki link rusak.
+    -   \`episodeNumber\`: Nomor episode yang link-nya rusak.
+-   **Contoh Request Body**:
+    \`\`\`json
+    {
+        "source": "Pucuk",
+        "description": "Link episode 10 tidak bisa diputar, error 404."
+    }
+    \`\`\`
+-   **Contoh Respons Sukses (Status 201 Created)**:
+    \`\`\`json
+    {
+        "message": "Broken link report submitted successfully",
+        "report": {
+            "id": "report_id_789",
+            "animeId": "1",
+            "episodeNumber": 10,
+            "source": "Pucuk",
+            "description": "Link episode 10 tidak bisa diputar, error 404.",
+            "reportedBy": "651a2b3c4d5e6f7a8b9c0d1e",
+            "status": "pending",
+            "createdAt": "2023-10-27T13:00:00.000Z"
+        }
+    }
+    \`\`\`
+
+---
+
+## 6. System Stats (Admin Only)
+
+### 6.1. Get System Statistics
+
+-   **Deskripsi**: Mengambil statistik sistem (memerlukan hak akses admin).
+-   **Method**: \`GET\`
+-   **Path**: \`/system/stats\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "totalUsers": 150,
+        "totalAnime": 25000,
+        "totalReviews": 1200,
+        "activeScrapers": 3,
+        "pendingBrokenLinkReports": 5,
+        "lastScrapeTime": "2023-10-27T08:00:00.000Z"
+    }
+    \`\`\`
+
+### 6.2. Get Failed Links
+
+-   **Deskripsi**: Mengambil daftar link yang gagal discrape (memerlukan hak akses admin).
+-   **Method**: \`GET\`
+-   **Path**: \`/system/failed-links\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": [
+            {
+                "_id": "failed_link_id_1",
+                "url": "https://example.com/broken-anime-link-1",
+                "error": "Failed to parse data structure",
+                "attemptedAt": "2023-10-27T09:00:00.000Z",
+                "text": "Anime Title - Episode X"
+            },
+            {
+                "_id": "failed_link_id_2",
+                "url": "https://example.com/broken-anime-link-2",
+                "error": "Connection timeout",
+                "attemptedAt": "2023-10-27T09:15:00.000Z",
+                "text": "Another Anime - Episode Y"
+            }
+        ]
+    }
+    \`\`\`
+
+### 6.3. Manual Match Scraped Link
+
+-   **Deskripsi**: Mencocokkan secara manual link yang discrape dengan MAL ID anime (memerlukan hak akses admin).
+-   **Method**: \`POST\`
+-   **Path**: \`/system/match/{scrapedId}/{malId}\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Path Params**:
+    -   \`scrapedId\`: ID unik dari link yang discrape (biasanya MongoDB \`_id\`).
+    -   \`malId\`: MAL ID anime yang akan dicocokkan.
+-   **Contoh Path**: \`/system/match/651a2b3c4d5e6f7a8b9c0d1e/1\`
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "message": "Scraped link successfully matched to animeId 1"
+    }
+    \`\`\`
+-   **Contoh Respons Gagal (Status 404 Not Found)**:
+    \`\`\`json
+    {
+        "message": "Scraped link or Anime not found"
+    }
+    \`\`\`
+
+### 6.4. Trigger Scraper
+
+-   **Deskripsi**: Memicu proses scraping ulang data (memerlukan hak akses admin).
+-   **Method**: \`POST\`
+-   **Path**: \`/system/rescraping\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Contoh Respons Sukses (Status 202 Accepted)**:
+    \`\`\`json
+    {
+        "message": "Scraping process triggered successfully"
+    }
+    \`\`\`
+
+### 6.5. Trigger Enrichment (Sync Data)
+
+-   **Deskripsi**: Memicu proses pengayaan data atau sinkronisasi (memerlukan hak akses admin).
+-   **Method**: \`POST\`
+-   **Path**: \`/system/sync-data\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Contoh Respons Sukses (Status 202 Accepted)**:
+    \`\`\`json
+    {
+        "message": "Data enrichment/sync process triggered successfully"
+    }
+    \`\`\`
+
+### 6.6. Sync and Create Jobs
+
+-   **Deskripsi**: Sinkronisasi data dan membuat job terkait (memerlukan hak akses admin).
+-   **Method**: \`POST\`
+-   **Path**: \`/system/sync-jobs\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Contoh Respons Sukses (Status 202 Accepted)**:
+    \`\`\`json
+    {
+        "message": "Sync and job creation process triggered successfully"
+    }
+    \`\`\`
+
+### 6.7. Get All Broken Link Reports
+
+-   **Deskripsi**: Mengambil semua laporan link rusak (memerlukan hak akses admin).
+-   **Method**: \`GET\`
+-   **Path**: \`/system/broken-link-reports\`
+-   **Otentikasi**: Diperlukan (admin).
+-   **Contoh Respons Sukses (Status 200 OK)**:
+    \`\`\`json
+    {
+        "data": [
+            {
+                "id": "report_id_789",
+                "animeId": "1",
+                "episodeNumber": 10,
+                "source": "Pucuk",
+                "description": "Link episode 10 tidak bisa diputar, error 404.",
+                "reportedBy": "user_id_xyz",
+                "status": "pending",
+                "createdAt": "2023-10-27T13:00:00.000Z"
+            },
+            {
+                "id": "report_id_012",
+                "animeId": "500",
+                "episodeNumber": 3,
+                "source": "Mega",
+                "description": "Video buffering terus-menerus.",
+                "reportedBy": "user_id_abc",
+                "status": "resolved",
+                "createdAt": "2023-10-26T10:00:00.000Z"
+            }
+        ]
+    }
+    \`\`\`
+`;
+
+            const filename = 'animeverse_api_documentation.md';
+            const blob = new Blob([docContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            displayResponseWithViews('documentationResponse', { ok: true, status: 200, data: { message: 'Dokumentasi API telah diunduh sebagai file Markdown.' } }, 'ui');
+        }
+        // --- Event Listeners & Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthStatus();
+
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Mencegah perilaku tautan default
+                    if (e.currentTarget.dataset.section) {
+                        showSection(e.currentTarget.dataset.section);
+                    }
+                });
+            });
+
+            // Tambahkan event listener untuk semua tab respons
+            document.querySelectorAll('.response-tabs').forEach(tabContainer => {
+                const responseContentId = tabContainer.querySelector('.response-tab-button').dataset.target;
+                const responseDiv = document.getElementById(responseContentId);
+                // Hanya inisialisasi jika ada _currentResult
+                if (responseDiv._currentResult) {
+                    displayResponseWithViews(responseContentId, responseDiv._currentResult, 'json'); // Default ke JSON View saat dimuat
+                } else {
+                    responseDiv.innerHTML = '<p style="color: var(--secondary-color); text-align: center; padding: 20px;">Belum ada data respons. Lakukan panggilan API.</p>';
+                }
+
+
+                tabContainer.querySelectorAll('.response-tab-button').forEach(btn => {
+                    // Event listener untuk tombol tab akan di-handle oleh displayResponseWithViews
+                    // sehingga kita tidak perlu menambahkan lagi di sini.
+                    // Ini untuk menghindari duplikasi listener saat memuat DOM.
+                });
+            });
+
+
+            // Tampilkan bagian Auth secara default saat halaman dimuat
+            showSection('auth-section');
+        });
+    </script>
+</body>
+
+</html>
