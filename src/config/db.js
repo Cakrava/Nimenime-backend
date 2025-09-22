@@ -5,7 +5,7 @@ const config = require('./index');
 const connectDB = async () => {
     try {
         await mongoose.connect(config.mongodbUri, {
-            dbName: "dbNimenime", // tentuin DB target
+            // dbName: "dbNimenime", // tentuin DB target
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
